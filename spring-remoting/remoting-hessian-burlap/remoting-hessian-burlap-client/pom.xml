@@ -3,15 +3,15 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>spring-remoting-hessian-burlap-client</artifactId>
-	<name>spring-remoting-hessian-burlap-client</name>
-	
-	<parent>
-        <artifactId>remoting-hessian-burlap</artifactId>
+    <artifactId>remoting-hessian-burlap-client</artifactId>
+    <name>remoting-hessian-burlap-client</name>
+
+    <parent>
         <groupId>com.baeldung</groupId>
+        <artifactId>remoting-hessian-burlap</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
-	
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -31,7 +31,7 @@
         <dependency>
             <groupId>com.caucho</groupId>
             <artifactId>hessian</artifactId>
-            <version>4.0.38</version>
+            <version>${hessian.version}</version>
         </dependency>
 
         <!-- test -->
@@ -58,4 +58,8 @@
         </dependency>
         <!-- test -->
     </dependencies>
+    <properties>
+        <hessian.version>4.0.38</hessian.version>
+    </properties>
+
 </project>

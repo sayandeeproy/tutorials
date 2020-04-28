@@ -4,12 +4,16 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,10 +23,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.baeldung.persistence.model.Foo;
 import com.baeldung.persistence.service.IFooService;
+import com.baeldung.web.exception.CustomException1;
+import com.baeldung.web.exception.CustomException2;
 import com.baeldung.web.exception.MyResourceNotFoundException;
 import com.baeldung.web.hateoas.event.PaginatedResultsRetrievedEvent;
 import com.baeldung.web.hateoas.event.ResourceCreatedEvent;
@@ -31,9 +38,11 @@ import com.baeldung.web.util.RestPreconditions;
 import com.google.common.base.Preconditions;
 
 @RestController
-@RequestMapping(value = "/auth/foos")
+@RequestMapping(value = "/foos")
 public class FooController {
 
+    private static final Logger logger = LoggerFactory.getLogger(FooController.class);
+    
     @Autowired
     private ApplicationEventPublisher eventPublisher;
 
@@ -45,15 +54,34 @@ public class FooController {
     }
 
     // API
+    
+    // Note: the global filter overrides the ETag value we set here. We can still analyze its behaviour in the Integration Test.
+    @GetMapping(value = "/{id}/custom-etag")
+    public ResponseEntity<Foo> findByIdWithCustomEtag(@PathVariable("id") final Long id,
+        final HttpServletResponse response) {
+        final Foo foo = RestPreconditions.checkFound(service.findById(id));
+
+        eventPublisher.publishEvent(new SingleResourceRetrievedEvent(this, response));
+        return ResponseEntity.ok()
+            .eTag(Long.toString(foo.getVersion()))
+            .body(foo);
+    }
 
     // read - one
 
     @GetMapping(value = "/{id}")
     public Foo findById(@PathVariable("id") final Long id, final HttpServletResponse response) {
-        final Foo resourceById = RestPreconditions.checkFound(service.findOne(id));
+        try {
+            final Foo resourceById = RestPreconditions.checkFound(service.findById(id));
 
-        eventPublisher.publishEvent(new SingleResourceRetrievedEvent(this, response));
-        return resourceById;
+            eventPublisher.publishEvent(new SingleResourceRetrievedEvent(this, response));
+            return resourceById;
+        }
+        catch (MyResourceNotFoundException exc) {
+            throw new ResponseStatusException(
+                HttpStatus.NOT_FOUND, "Foo Not Found", exc);
+        }
+
     }
 
     // read - all
@@ -107,7 +135,7 @@ public class FooController {
     @ResponseStatus(HttpStatus.OK)
     public void update(@PathVariable("id") final Long id, @RequestBody final Foo resource) {
         Preconditions.checkNotNull(resource);
-        RestPreconditions.checkFound(service.findOne(resource.getId()));
+        RestPreconditions.checkFound(service.findById(resource.getId()));
         service.update(resource);
     }
 
@@ -115,5 +143,11 @@ public class FooController {
     @ResponseStatus(HttpStatus.OK)
     public void delete(@PathVariable("id") final Long id) {
         service.deleteById(id);
+    }
+    
+    @ExceptionHandler({ CustomException1.class, CustomException2.class })
+    public void handleException(final Exception ex) {
+        final String error = "Application specific error handling";
+        logger.error(error, ex);
     }
 }

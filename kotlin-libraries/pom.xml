@@ -19,25 +19,33 @@
             <name>exposed</name>
             <url>https://dl.bintray.com/kotlin/exposed</url>
         </repository>
+        <repository>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <id>kotlinx</id>
+            <name>bintray</name>
+            <url>https://dl.bintray.com/kotlin/kotlinx</url>
+        </repository>
     </repositories>
 
     <dependencies>
         <dependency>
             <groupId>org.jetbrains.spek</groupId>
             <artifactId>spek-api</artifactId>
-            <version>1.1.5</version>
+            <version>${spek.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.jetbrains.spek</groupId>
             <artifactId>spek-subject-extension</artifactId>
-            <version>1.1.5</version>
+            <version>${spek.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.jetbrains.spek</groupId>
             <artifactId>spek-junit-platform-engine</artifactId>
-            <version>1.1.5</version>
+            <version>${spek.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -48,7 +56,6 @@
         <dependency>
             <groupId>org.junit.platform</groupId>
             <artifactId>junit-platform-runner</artifactId>
-            <version>${junit.platform.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -70,7 +77,6 @@
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
-            <version>${assertj.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -86,13 +92,12 @@
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-            <version>${h2database.version}</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/io.arrow-kt/arrow-core -->
         <dependency>
             <groupId>io.arrow-kt</groupId>
             <artifactId>arrow-core</artifactId>
-            <version>0.7.3</version>
+            <version>${arrow-core.version}</version>
         </dependency>
 
         <dependency>
@@ -109,12 +114,44 @@
         <dependency>
             <groupId>nl.komponents.kovenant</groupId>
             <artifactId>kovenant</artifactId>
-            <version>3.3.0</version>
+            <version>${kovenant.version}</version>
             <type>pom</type>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/junit/junit -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+
+        <dependency>
+            <groupId>net.bytebuddy</groupId>
+            <artifactId>byte-buddy</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.bytebuddy</groupId>
+            <artifactId>byte-buddy-agent</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.objenesis</groupId>
+            <artifactId>objenesis</artifactId>
+            <version>${objenesis.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>io.reactivex.rxjava2</groupId>
+            <artifactId>rxkotlin</artifactId>
+            <version>${rxkotlin.version}</version>
         </dependency>
     </dependencies>
 
     <properties>
+        <junit.version>4.12</junit.version>
         <mockito-kotlin.version>1.5.0</mockito-kotlin.version>
         <kodein.version>4.1.0</kodein.version>
         <klaxon.version>3.0.4</klaxon.version>
@@ -123,8 +160,13 @@
         <junit.platform.version>1.1.1</junit.platform.version>
         <junit.vintage.version>5.2.0</junit.vintage.version>
         <assertj.version>3.10.0</assertj.version>
-        <h2database.version>1.4.197</h2database.version>
         <exposed.version>0.10.4</exposed.version>
+        <kovenant.version>3.3.0</kovenant.version>
+        <byte-buddy.version>1.8.13</byte-buddy.version>
+        <objenesis.version>2.6</objenesis.version>
+        <rxkotlin.version>2.3.0</rxkotlin.version>
+        <arrow-core.version>0.7.3</arrow-core.version>
+        <spek.version>1.1.5</spek.version>
     </properties>
 
 </project>
